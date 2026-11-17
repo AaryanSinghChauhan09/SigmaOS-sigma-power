@@ -3,7 +3,7 @@ name = "SigmaOS-sigma-power"
 tier = 2
 stability = "scaffold"
 language = "rust"
-description = "sigma-power component"
+description = "SigmaOS sigma-power - modular Rust crate for the SigmaOS system"
 upstream = []
 
 [contract]
