@@ -1,77 +1,131 @@
-//! SigmaOS Power Management
-//! Inspired by Linux Mint and Omarchy Linux
-//! Manages power settings, CPU governors, and power state transitions.
+//! SigmaOS-sigma_power — sigma_power component for SigmaOS
+#![forbid(unsafe_code)]
+#![warn(missing_docs)]
 
-/// PowerMode represents the current power mode of the system.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum PowerMode {
-    Performance,
-    Powersave,
-    Balanced,
-    Auto,
+use thiserror::Error;
+
+/// Error types for this component.
+#[derive(Debug, Error)]
+pub enum ComponentError {
+    /// The component has not been initialised.
+    #[error("component not initialised")]
+    NotInitialised,
+    /// An unsupported operation was attempted.
+    #[error("unsupported operation: {0}")]
+    Unsupported(&'static str),
 }
 
-impl PowerMode {
-    pub fn as_str(&self) -> &'static str {
-        match self {
-            Self::Performance => "performance",
-            Self::Powersave => "powersave",
-            Self::Balanced => "balanced",
-            Self::Auto => "auto",
-        }
-    }
+/// Convenience result type.
+pub type ComponentResult<T> = Result<T, ComponentError>;
+
+/// Core component struct for sigma_power.
+#[derive(Debug, Default, Clone)]
+pub struct Component {
+    initialised: bool,
+    name: String,
 }
 
-/// PowerManager manages system power settings and transitions.
-pub struct PowerManager {
-    mode: PowerMode,
-    swappiness: u32,
-    initialized: bool,
-}
-
-impl Default for PowerManager {
-    fn default() -> Self {
+impl Component {
+    /// Create a new, uninitialised component.
+    pub fn new() -> Self {
         Self {
-            mode: PowerMode::Balanced,
-            swappiness: 10,
-            initialized: false,
-        }
-    }
-}
-
-impl PowerManager {
-    pub fn new(mode: PowerMode, swappiness: u32) -> Self {
-        Self {
-            mode,
-            swappiness,
-            initialized: false,
+            initialised: false,
+            name: String::from("sigma_power"),
         }
     }
 
-    pub fn mode(&self) -> PowerMode {
-        self.mode
-    }
-
-    pub fn swappiness(&self) -> u32 {
-        self.swappiness
-    }
-
-    pub fn is_initialized(&self) -> bool {
-        self.initialized
-    }
-
-    pub fn initialize(&mut self) -> Result<(), String> {
-        // Initialize power management
-        self.initialized = true;
+    /// Initialise the component.
+    pub fn init(&mut self) -> ComponentResult<()> {
+        self.initialised = true;
         Ok(())
     }
 
-    pub fn set_mode(&mut self, mode: PowerMode) -> Result<(), String> {
-        self.mode = mode;
+    /// Returns true if the component has been initialised.
+    pub fn is_ready(&self) -> bool {
+        self.initialised
+    }
+
+    /// Execute the component's primary operation.
+    pub fn run(&self) -> ComponentResult<()> {
+        if !self.initialised {
+            return Err(ComponentError::NotInitialised);
+        }
         Ok(())
     }
 
-    pub fn set_swappiness(&mut self, swappiness: u32) {
-        self.swappiness = swappiness.min(100);
+    /// Return the component name.
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+
+    /// Reset the component to uninitialised state.
+    pub fn reset(&mut self) {
+        self.initialised = false;
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_new_not_ready_aaa() {
+        // Arrange + Act
+        let c = Component::new();
+        // Assert
+        assert!(!c.is_ready());
+    }
+
+    #[test]
+    fn test_init_makes_ready_aaa() {
+        // Arrange
+        let mut c = Component::new();
+        // Act
+        c.init().unwrap();
+        // Assert
+        assert!(c.is_ready());
+    }
+
+    #[test]
+    fn test_run_before_init_fails_aaa() {
+        // Arrange
+        let c = Component::new();
+        // Act
+        let result = c.run();
+        // Assert
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_run_after_init_succeeds_aaa() {
+        // Arrange
+        let mut c = Component::new();
+        c.init().unwrap();
+        // Act
+        let result = c.run();
+        // Assert
+        assert!(result.is_ok());
+    }
+
+    #[test]
+    fn test_reset_clears_init_aaa() {
+        // Arrange
+        let mut c = Component::new();
+        c.init().unwrap();
+        assert!(c.is_ready());
+        // Act
+        c.reset();
+        // Assert
+        assert!(!c.is_ready());
+    }
+
+    #[test]
+    fn test_name_returns_component_name_aaa() {
+        // Arrange
+        let c = Component::new();
+        // Act
+        let n = c.name();
+        // Assert
+        assert!(!n.is_empty());
     }
 }

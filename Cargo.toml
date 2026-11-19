@@ -1,10 +1,15 @@
 [package]
-name = "sigma-power"
-version = "0.2.0"
+name = "SigmaOS-sigma-power"
+version = "0.1.0"
 edition = "2021"
-authors = ["Aaryan Singh Chauhan <aaryan.singh.chauhan.09@gmail.com>"]
-description = "SigmaOS Power Management - inspired by Linux Mint and Omarchy Linux"
-license = "GPL-3.0-or-later"
+license = "Apache-2.0"
+description = "SigmaOS sigma_power component"
+
+[lib]
+name = "sigma_power"
+path = "src/lib.rs"
 
 [dependencies]
-sigma-system = { path = "../sigma-system" }
+thiserror = "1"
+
+[dev-dependencies]
