@@ -2,6 +2,9 @@
 #![forbid(unsafe_code)]
 #![warn(missing_docs)]
 
+/// Power management settings module.
+pub mod sigmapower;
+
 use thiserror::Error;
 
 /// Error types for this component.

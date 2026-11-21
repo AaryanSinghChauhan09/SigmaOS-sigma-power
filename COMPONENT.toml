@@ -3,11 +3,11 @@ name = "SigmaOS-sigma-power"
 tier = 2
 stability = "scaffold"
 language = "rust"
-description = "SigmaOS sigma-power - modular Rust crate for the SigmaOS system"
+description = "Power management settings (profiles, brightness, power saving)"
 upstream = []
 
 [contract]
-provides = ["component"]
+provides = ["sigmapower"]
 depends_on = []
 
 [maturity]
