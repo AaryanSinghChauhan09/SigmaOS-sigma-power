@@ -4,6 +4,7 @@
 
 /// Power management settings module.
 pub mod sigmapower;
+pub mod sigmapowermanager;
 
 use thiserror::Error;
 
