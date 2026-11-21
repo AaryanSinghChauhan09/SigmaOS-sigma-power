@@ -133,3 +133,9 @@ mod tests {
         assert!(!n.is_empty());
     }
 }
+
+/// Module extracted from the SigmaOS-system monolith.
+pub mod power;
+
+/// Module extracted from the SigmaOS-system monolith.
+pub mod power_manager;
